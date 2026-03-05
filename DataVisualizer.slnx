@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="DataVisualizer.Application/DataVisualizer.Application.csproj" />
+  <Project Path="DataVisualizer.Domain/DataVisualizer.Domain.csproj" />
+  <Project Path="DataVisualizer.Infrastructure/DataVisualizer.Infrastructure.csproj" />
+  <Project Path="DataVisualizer.Tests/DataVisualizer.Tests.csproj" Id="4e0f32e4-5758-44ab-b503-442ec484c02d" />
+  <Project Path="DataVisualizer.UI/DataVisualizer.UI.csproj" />
+</Solution>
