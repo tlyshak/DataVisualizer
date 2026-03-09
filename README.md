@@ -19,7 +19,6 @@ The project follows a **layered architecture**.
 - MVVM
 - CommunityToolkit.Mvvm
 - MaterialDesignInXAML
-- Microsoft.Extensions.Logging
 - MSTest
 
 ## Requirements
