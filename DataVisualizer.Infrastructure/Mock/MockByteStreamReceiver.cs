@@ -1,12 +1,13 @@
 ﻿using DataVisualizer.Application.Interfaces;
 using DataVisualizer.Domain.Models;
-using DataVisualizer.Infrastructure.Protocol;
+using Microsoft.Extensions.Logging;
 
 namespace DataVisualizer.Infrastructure.Mock;
 
-public sealed class MockByteStreamReceiver : ITcpSignalReceiver
+public sealed class MockByteStreamReceiver(ILogger<ITcpSignalReceiver> logger, ISignalProtocolParser parser) : ITcpSignalReceiver
 {
-    private readonly SignalProtocolParser _parser = new();
+    private readonly ISignalProtocolParser _parser = parser;
+    private readonly ILogger<ITcpSignalReceiver> _logger = logger;
 
     public async Task RunAsync(Func<Signal, Task> onSignalCreated, CancellationToken ct)
     {
@@ -27,6 +28,7 @@ public sealed class MockByteStreamReceiver : ITcpSignalReceiver
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
+            _logger.LogInformation("Receiving signals was canceled.");
         }
     }
 }

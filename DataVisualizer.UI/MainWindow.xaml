@@ -149,7 +149,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Header="Created On"
-                        Binding="{Binding CreatedOn}"
+                        Binding="{Binding CreatedOn, StringFormat={}{0:dd MMM yyyy\ HH:mm:ss}}"
                         SortMemberPath="CreatedOn"
                         Width="2*" />
                     <DataGridTextColumn

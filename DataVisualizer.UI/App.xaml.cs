@@ -3,6 +3,8 @@ using DataVisualizer.Application.Services;
 using DataVisualizer.Infrastructure.Mock;
 using DataVisualizer.Infrastructure.Protocol;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using SignalMonitor.Wpf.ViewModels;
 using System.Windows;
 
@@ -17,11 +19,23 @@ public partial class App : System.Windows.Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.File(
+                "Logs/log.txt",
+                rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
         var sc = new ServiceCollection();
+        sc.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddSerilog();
+        });
 
         // Infrastructure
         sc.AddSingleton<ISignalProtocolParser, SignalProtocolParser>();
         sc.AddSingleton<ITcpSignalReceiver, MockByteStreamReceiver>();
+        sc.AddSingleton<ISignalProtocolParser, SignalProtocolParser>();
 
         // Application
         sc.AddSingleton<IAggregationService, AggregationService>();

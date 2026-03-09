@@ -1,13 +1,16 @@
-﻿using DataVisualizer.Domain.Models;
+﻿using DataVisualizer.Application.Interfaces;
+using DataVisualizer.Domain.Models;
 using DataVisualizer.Infrastructure.Protocol;
 using DataVisualizer.Tests.Helpers;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace DataVisualizer.Tests;
 
 [TestClass]
 public class SignalProtocolParserTests
 {
-    private static SignalProtocolParser CreateParser() => new SignalProtocolParser(TestPacketFactory.SignalType); 
+    private static SignalProtocolParser CreateParser() => new(new Mock<ILogger<ISignalProtocolParser>>().Object, TestPacketFactory.SignalType); 
 
     [TestMethod]
     public void TryConsume_ReturnsFalse_WhenLessThanHeader()

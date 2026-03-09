@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataVisualizer.Application.Interfaces;
 using DataVisualizer.Domain.Models;
 using DataVisualizer.UI;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -14,6 +15,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ISignalProcessingService _signalProcessingService;
     private readonly IAggregationService _aggregationService;
+    private readonly ILogger<MainViewModel> _logger;
     private CancellationTokenSource? _cts;
     private readonly Dictionary<SignalRecord, SignalRowViewModel> _recordViewModels = [];
     private const string ZeroRecordsText = "Records: 0";
@@ -34,10 +36,11 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(StopCommand))]
     private bool isRunning;
 
-    public MainViewModel(ISignalProcessingService signalProcessingService, IAggregationService aggregationService)
+    public MainViewModel(ISignalProcessingService signalProcessingService, IAggregationService aggregationService, ILogger<MainViewModel> logger)
     {
         _signalProcessingService = signalProcessingService;
         _aggregationService = aggregationService;
+        _logger = logger;
         RecordsView = CollectionViewSource.GetDefaultView(Records);
         RecordsView.Filter = FilterRecord;
         RecordsView.SortDescriptions.Add(new SortDescription(nameof(SignalRowViewModel.CreatedOn), ListSortDirection.Descending));
@@ -58,19 +61,22 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
+            _logger.LogInformation("Signal receiving started.");
             await _signalProcessingService.StartAsync(onRecordUpdated: OnRecordUpdated, _cts.Token);
         }
         catch (OperationCanceledException)
         {
+            _logger.LogInformation("Signal receiving cancelled.");
         }
         catch (Exception ex)
         {
             StatusText = "Error";
-
+            _logger.LogError(ex, "Error during receiving signals.");
             MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
+            _logger.LogInformation("Signal receiving stopped.");
             IsRunning = false;
             StatusText = ProcessStopped;
 
